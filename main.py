@@ -1,19 +1,66 @@
 import discord
 import Globals
 from Salai import PassPromptToSelfBot, Upscale, MaxUpscale, Variation
+import time
+import asyncio
+
+
+from discord.ext import tasks
 
 bot = discord.Bot(intents=discord.Intents.all())
 #client = discord.Client(intents = discord.Intents.all())
 
+##################
+class MyView(discord.ui.View):
+    @discord.ui.button(label="Button 1", row=0, style=discord.ButtonStyle.primary)
+    async def first_button_callback(self, button, interaction):
+        await interaction.response.send_message("You pressed me! button1")
+
+    @discord.ui.button(label="Button 2", row=1, style=discord.ButtonStyle.primary)
+    async def second_button_callback(self, button, interaction):
+        await interaction.response.send_message("You pressed me! button2" )
+
+@bot.slash_command() # Create a slash command
+async def button(ctx):
+    await ctx.respond("This is a button!", view=MyView()) # Send a message with our View class that contains the button
+
+##################
+
+@tasks.loop(seconds=10.0, count=5)
+async def slow_count():
+    await print(slow_count.current_loop)
 
 @bot.event
 async def on_ready():
     print(f"Logged in as {bot.user}")
+    
 
 
-@bot.command(description="Make DaVinci say something")
-async def hello(ctx, sentence: discord.Option(str)):
-    await ctx.respond(sentence)
+@bot.command(description="Ma55555555ke DaVinci say something")
+async def bobo(ctx, prompt: discord.Option(str)):
+	await ctx.respond("kuniciva 5646546")
+	await print("ahoj")
+
+
+
+@bot.command(description="Testik commandThis command is a wrapper of MidJourneyAI")
+async def hoho_prompt(ctx, prompt: discord.Option(str)):
+	for i in range(0,3):
+		
+		response = PassPromptToSelfBot("big blue bird %i " % i)
+		if response.status_code >= 400:
+			await ctx.respond("Request has failed; please try later")
+		else:
+			await ctx.respond(
+				"Your bird image is being prepared, please wait a moment...")
+		await asyncio.sleep(3)
+
+@bot.command(description="Twerewrew estik commandThis command is a wrapper of MidJourneyAI")
+async def momo_liny(ctx, prompt: discord.Option(str)):
+	for i in prompt.split(";"):
+		await ctx.respond("aaa line " + i)
+		await asyncio.sleep(3)
+
 
 
 @bot.command(description="This command is a wrapper of MidJourneyAI")
